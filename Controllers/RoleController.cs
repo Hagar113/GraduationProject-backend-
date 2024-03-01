@@ -97,6 +97,7 @@ namespace GraduationProject.Controllers
         }
 
         // this function for add a new role with list of permissions 
+        [HttpPost("addRole")]
         public ActionResult add(SaveRoleDTO saveRole)
         {
             /// addd
