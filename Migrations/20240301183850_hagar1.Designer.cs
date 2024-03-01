@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240223171924_v5")]
-    partial class v5
+    [Migration("20240301183850_hagar1")]
+    partial class hagar1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,6 @@ namespace GraduationProject.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -76,17 +75,20 @@ namespace GraduationProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<TimeSpan>("AttendanceTime")
+                        .HasColumnType("time");
+
                     b.Property<DateTime>("Birthdate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Contractdate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EA_Id")
-                        .HasColumnType("int");
-
                     b.Property<int?>("GId")
                         .HasColumnType("int");
+
+                    b.Property<TimeSpan>("LeaveTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -106,9 +108,6 @@ namespace GraduationProject.Migrations
                     b.Property<int?>("deptid")
                         .HasColumnType("int");
 
-                    b.Property<int?>("employeeAttendanceId")
-                        .HasColumnType("int");
-
                     b.Property<string>("phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -123,8 +122,6 @@ namespace GraduationProject.Migrations
                     b.HasIndex("Sal_ID");
 
                     b.HasIndex("deptid");
-
-                    b.HasIndex("employeeAttendanceId");
 
                     b.HasIndex("user_Id");
 
@@ -145,7 +142,12 @@ namespace GraduationProject.Migrations
                     b.Property<DateTime>("Departure")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeeAttendances");
                 });
@@ -180,6 +182,9 @@ namespace GraduationProject.Migrations
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -290,17 +295,17 @@ namespace GraduationProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ExtraSalary")
-                        .HasColumnType("int");
+                    b.Property<double>("ExtraSalary")
+                        .HasColumnType("float");
 
-                    b.Property<int>("NetSalary")
-                        .HasColumnType("int");
+                    b.Property<double>("NetSalary")
+                        .HasColumnType("float");
 
-                    b.Property<int>("SalaryLoss")
-                        .HasColumnType("int");
+                    b.Property<double>("SalaryLoss")
+                        .HasColumnType("float");
 
-                    b.Property<int>("TotalSalary")
-                        .HasColumnType("int");
+                    b.Property<double>("TotalSalary")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -360,23 +365,26 @@ namespace GraduationProject.Migrations
                         .WithMany("Employees")
                         .HasForeignKey("deptid");
 
-                    b.HasOne("GraduationProject.Models.EmployeeAttendance", "employeeAttendance")
-                        .WithMany()
-                        .HasForeignKey("employeeAttendanceId");
-
                     b.HasOne("GraduationProject.Models.User", "user")
                         .WithMany()
                         .HasForeignKey("user_Id");
 
                     b.Navigation("dept");
 
-                    b.Navigation("employeeAttendance");
-
                     b.Navigation("gender");
 
                     b.Navigation("salary");
 
                     b.Navigation("user");
+                });
+
+            modelBuilder.Entity("GraduationProject.Models.EmployeeAttendance", b =>
+                {
+                    b.HasOne("GraduationProject.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("GraduationProject.Models.Holiday", b =>

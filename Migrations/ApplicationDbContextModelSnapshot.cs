@@ -31,7 +31,6 @@ namespace GraduationProject.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -73,17 +72,20 @@ namespace GraduationProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<TimeSpan>("AttendanceTime")
+                        .HasColumnType("time");
+
                     b.Property<DateTime>("Birthdate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Contractdate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EA_Id")
-                        .HasColumnType("int");
-
                     b.Property<int?>("GId")
                         .HasColumnType("int");
+
+                    b.Property<TimeSpan>("LeaveTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -103,9 +105,6 @@ namespace GraduationProject.Migrations
                     b.Property<int?>("deptid")
                         .HasColumnType("int");
 
-                    b.Property<int?>("employeeAttendanceId")
-                        .HasColumnType("int");
-
                     b.Property<string>("phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -120,8 +119,6 @@ namespace GraduationProject.Migrations
                     b.HasIndex("Sal_ID");
 
                     b.HasIndex("deptid");
-
-                    b.HasIndex("employeeAttendanceId");
 
                     b.HasIndex("user_Id");
 
@@ -142,7 +139,12 @@ namespace GraduationProject.Migrations
                     b.Property<DateTime>("Departure")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeeAttendances");
                 });
@@ -172,6 +174,12 @@ namespace GraduationProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("C_Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -179,12 +187,9 @@ namespace GraduationProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("emp_Id")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("emp_Id");
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("Holidays");
                 });
@@ -287,17 +292,17 @@ namespace GraduationProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ExtraSalary")
-                        .HasColumnType("int");
+                    b.Property<double>("ExtraSalary")
+                        .HasColumnType("float");
 
-                    b.Property<int>("NetSalary")
-                        .HasColumnType("int");
+                    b.Property<double>("NetSalary")
+                        .HasColumnType("float");
 
-                    b.Property<int>("SalaryLoss")
-                        .HasColumnType("int");
+                    b.Property<double>("SalaryLoss")
+                        .HasColumnType("float");
 
-                    b.Property<int>("TotalSalary")
-                        .HasColumnType("int");
+                    b.Property<double>("TotalSalary")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -357,17 +362,11 @@ namespace GraduationProject.Migrations
                         .WithMany("Employees")
                         .HasForeignKey("deptid");
 
-                    b.HasOne("GraduationProject.Models.EmployeeAttendance", "employeeAttendance")
-                        .WithMany()
-                        .HasForeignKey("employeeAttendanceId");
-
                     b.HasOne("GraduationProject.Models.User", "user")
                         .WithMany()
                         .HasForeignKey("user_Id");
 
                     b.Navigation("dept");
-
-                    b.Navigation("employeeAttendance");
 
                     b.Navigation("gender");
 
@@ -376,13 +375,22 @@ namespace GraduationProject.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("GraduationProject.Models.EmployeeAttendance", b =>
+                {
+                    b.HasOne("GraduationProject.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("GraduationProject.Models.Holiday", b =>
                 {
-                    b.HasOne("GraduationProject.Models.Employee", "emplyee")
+                    b.HasOne("GraduationProject.Models.Company", "Company")
                         .WithMany("Holidays")
-                        .HasForeignKey("emp_Id");
+                        .HasForeignKey("CompanyId");
 
-                    b.Navigation("emplyee");
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("GraduationProject.Models.HolidayDay", b =>
@@ -423,16 +431,13 @@ namespace GraduationProject.Migrations
             modelBuilder.Entity("GraduationProject.Models.Company", b =>
                 {
                     b.Navigation("Dpartments");
+
+                    b.Navigation("Holidays");
                 });
 
             modelBuilder.Entity("GraduationProject.Models.Department", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("GraduationProject.Models.Employee", b =>
-                {
-                    b.Navigation("Holidays");
                 });
 
             modelBuilder.Entity("GraduationProject.Models.Holiday", b =>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GraduationProject.Migrations
 {
     /// <inheritdoc />
-    public partial class v1 : Migration
+    public partial class hagar1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,25 +17,11 @@ namespace GraduationProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Companies", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeAttendances",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Attendence = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Departure = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeAttendances", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,10 +69,10 @@ namespace GraduationProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NetSalary = table.Column<int>(type: "int", nullable: false),
-                    ExtraSalary = table.Column<int>(type: "int", nullable: false),
-                    SalaryLoss = table.Column<int>(type: "int", nullable: false),
-                    TotalSalary = table.Column<int>(type: "int", nullable: false)
+                    NetSalary = table.Column<double>(type: "float", nullable: false),
+                    ExtraSalary = table.Column<double>(type: "float", nullable: false),
+                    SalaryLoss = table.Column<double>(type: "float", nullable: false),
+                    TotalSalary = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -100,7 +86,7 @@ namespace GraduationProject.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Company_Id = table.Column<int>(type: "int", nullable: false)
+                    Company_Id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,8 +95,7 @@ namespace GraduationProject.Migrations
                         name: "FK_Departments_Companies_Company_Id",
                         column: x => x.Company_Id,
                         principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -120,8 +105,9 @@ namespace GraduationProject.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    C_Id = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    C_Id = table.Column<int>(type: "int", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -130,8 +116,7 @@ namespace GraduationProject.Migrations
                         name: "FK_Holidays_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -144,8 +129,8 @@ namespace GraduationProject.Migrations
                     IsAdd = table.Column<bool>(type: "bit", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: false),
                     IsIdit = table.Column<bool>(type: "bit", nullable: false),
-                    Role_Id = table.Column<int>(type: "int", nullable: false),
-                    Page_Id = table.Column<int>(type: "int", nullable: false)
+                    Role_Id = table.Column<int>(type: "int", nullable: true),
+                    Page_Id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -154,14 +139,12 @@ namespace GraduationProject.Migrations
                         name: "FK_RolePermissions_Pages_Page_Id",
                         column: x => x.Page_Id,
                         principalTable: "Pages",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_RolePermissions_Roles_Role_Id",
                         column: x => x.Role_Id,
                         principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -173,7 +156,7 @@ namespace GraduationProject.Migrations
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role_Id = table.Column<int>(type: "int", nullable: false)
+                    Role_Id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,8 +165,7 @@ namespace GraduationProject.Migrations
                         name: "FK_Users_Roles_Role_Id",
                         column: x => x.Role_Id,
                         principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -219,31 +201,20 @@ namespace GraduationProject.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Contractdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AttendanceTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    LeaveTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     deptid = table.Column<int>(type: "int", nullable: true),
                     GId = table.Column<int>(type: "int", nullable: true),
                     Sal_ID = table.Column<int>(type: "int", nullable: true),
-                    EA_Id = table.Column<int>(type: "int", nullable: true),
-                    employeeAttendanceId = table.Column<int>(type: "int", nullable: true),
-                    C_Id = table.Column<int>(type: "int", nullable: true),
                     user_Id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Employees_Companies_C_Id",
-                        column: x => x.C_Id,
-                        principalTable: "Companies",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Employees_Departments_deptid",
                         column: x => x.deptid,
                         principalTable: "Departments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Employees_EmployeeAttendances_employeeAttendanceId",
-                        column: x => x.employeeAttendanceId,
-                        principalTable: "EmployeeAttendances",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Employees_Genders_GId",
@@ -262,25 +233,40 @@ namespace GraduationProject.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "EmployeeAttendances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Attendence = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Departure = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeAttendances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeeAttendances_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Departments_Company_Id",
                 table: "Departments",
                 column: "Company_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employees_C_Id",
-                table: "Employees",
-                column: "C_Id");
+                name: "IX_EmployeeAttendances_EmployeeId",
+                table: "EmployeeAttendances",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_deptid",
                 table: "Employees",
                 column: "deptid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_employeeAttendanceId",
-                table: "Employees",
-                column: "employeeAttendanceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_GId",
@@ -327,7 +313,7 @@ namespace GraduationProject.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "EmployeeAttendances");
 
             migrationBuilder.DropTable(
                 name: "HolidayDays");
@@ -336,10 +322,16 @@ namespace GraduationProject.Migrations
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "Departments");
+                name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "EmployeeAttendances");
+                name: "Holidays");
+
+            migrationBuilder.DropTable(
+                name: "Pages");
+
+            migrationBuilder.DropTable(
+                name: "Departments");
 
             migrationBuilder.DropTable(
                 name: "Genders");
@@ -351,16 +343,10 @@ namespace GraduationProject.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Holidays");
-
-            migrationBuilder.DropTable(
-                name: "Pages");
+                name: "Companies");
 
             migrationBuilder.DropTable(
                 name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Companies");
         }
     }
 }
