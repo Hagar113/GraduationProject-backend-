@@ -9,7 +9,7 @@ namespace GraduationProject.Models
         public DateTime Departure { get; set;}
 
         [ForeignKey("Employee")]
-        public int? EmployeeId { get; set; }
+        public int EmployeeId { get; set; }
         public virtual Employee? Employee { get; set; }
 
     }

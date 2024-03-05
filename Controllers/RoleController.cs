@@ -17,6 +17,7 @@ namespace GraduationProject.Controllers
         {
             _context = context;
         }
+
         [HttpGet("GetAllRoles")]
         public ActionResult GetAllRoles()
         {
@@ -62,7 +63,7 @@ namespace GraduationProject.Controllers
                         {
                             IsAdd = access.isAdd,
                             IsDelete = access.isDelete,
-                            IsIdit = access.isEdit,
+                            IsEdit = access.isEdit,
                             IsView = access.isView,
                         });
                     }
@@ -97,7 +98,7 @@ namespace GraduationProject.Controllers
         }
 
         // this function for add a new role with list of permissions 
-        [HttpPost("addRole")]
+        [HttpPost("add")]
         public ActionResult add(SaveRoleDTO saveRole)
         {
             /// addd
@@ -112,7 +113,7 @@ namespace GraduationProject.Controllers
                 {
                     IsAdd = access.isAdd,
                     IsDelete = access.isDelete,
-                    IsIdit = access.isEdit,
+                    IsEdit = access.isEdit,
                     IsView = access.isView,
                 });
             }

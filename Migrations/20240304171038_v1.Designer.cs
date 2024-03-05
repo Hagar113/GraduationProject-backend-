@@ -4,6 +4,7 @@ using GraduationProject.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240304171038_v1")]
+    partial class v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,27 +176,22 @@ namespace GraduationProject.Migrations
 
             modelBuilder.Entity("GraduationProject.Models.GeneralSettings", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int?>("Addition")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Deduction")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SelectedFirstWeekendDay")
-                        .IsRequired()
+                    b.Property<string>("method")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SelectedSecondWeekendDay")
-                        .IsRequired()
+                    b.Property<string>("selectedFirstWeekendDay")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("selectedSecondWeekendDay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
 
                     b.ToTable("generalSettings");
                 });
@@ -224,6 +222,27 @@ namespace GraduationProject.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Holidays");
+                });
+
+            modelBuilder.Entity("GraduationProject.Models.HolidayDay", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("H_Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("H_Id");
+
+                    b.ToTable("HolidayDays");
                 });
 
             modelBuilder.Entity("GraduationProject.Models.Page", b =>
@@ -424,6 +443,17 @@ namespace GraduationProject.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("GraduationProject.Models.HolidayDay", b =>
+                {
+                    b.HasOne("GraduationProject.Models.Holiday", "holiday")
+                        .WithMany("HolidayDays")
+                        .HasForeignKey("H_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("holiday");
+                });
+
             modelBuilder.Entity("GraduationProject.Models.RolePermission", b =>
                 {
                     b.HasOne("GraduationProject.Models.Page", "page")
@@ -458,6 +488,11 @@ namespace GraduationProject.Migrations
             modelBuilder.Entity("GraduationProject.Models.Department", b =>
                 {
                     b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("GraduationProject.Models.Holiday", b =>
+                {
+                    b.Navigation("HolidayDays");
                 });
 
             modelBuilder.Entity("GraduationProject.Models.Page", b =>

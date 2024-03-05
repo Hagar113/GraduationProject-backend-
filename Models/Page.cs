@@ -4,6 +4,6 @@
     {
         public int id { get; set; }
         public string name { get; set; }
-        public virtual List<RolePermission>?RolePermissions { get; set; }
+        public virtual List<RolePermission>? RolePermissions { get; set; }
     }
 }

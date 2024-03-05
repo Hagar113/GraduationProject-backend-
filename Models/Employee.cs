@@ -27,10 +27,6 @@ namespace GraduationProject.Models
         public int? Sal_ID { get; set; }
         public virtual Salary? salary { get; set; }
 
-        //[ForeignKey("employeeAttendance")]
-        //public int? EA_Id { set; get; }
-        //public virtual EmployeeAttendance? employeeAttendance { get; set; }
-
         [ForeignKey("user")]
         public int? user_Id { get; set; }
         public virtual User? user{ get; set; }

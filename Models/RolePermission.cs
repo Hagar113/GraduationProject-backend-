@@ -8,7 +8,7 @@ namespace GraduationProject.Models
         public bool IsView { get; set; }
         public bool IsAdd { get; set; }
         public bool IsDelete { get; set; }
-        public bool IsIdit { get; set; }
+        public bool IsEdit { get; set; }
         [ForeignKey("role")]
         public int? Role_Id { get; set; }
         public virtual Role? role{ get; set; }
