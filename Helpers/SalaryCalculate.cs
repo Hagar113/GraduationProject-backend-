@@ -36,7 +36,9 @@ namespace GraduationProject.Helpers
 
             double DayPrice = Emp.salary.NetSalary / 30;
 
-            double timeDifferenceInHours = (Emp.LeaveTime - Emp.AttendanceTime).TotalHours;
+            DateTime leaveTime = DateTime.Parse(Emp.LeaveTime);
+            DateTime attendanceTime = DateTime.Parse(Emp.AttendanceTime);
+            double timeDifferenceInHours = (leaveTime - attendanceTime).TotalHours;
 
             double HourPrice = DayPrice / timeDifferenceInHours;
 
