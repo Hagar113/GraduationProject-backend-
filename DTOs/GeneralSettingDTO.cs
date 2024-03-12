@@ -10,5 +10,7 @@
         public string SelectedFirstWeekendDay { get; set; }
 
         public string SelectedSecondWeekendDay { get; set; }
+        public List<int> SelectedVacationDays { get; set; }
+
     }
 }
