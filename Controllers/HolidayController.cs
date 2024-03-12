@@ -15,7 +15,7 @@ namespace GraduationProject.Controllers
         {
             _context = context;
         }
-        
+
 
         [HttpGet]
         public ActionResult GetHolidays()
@@ -23,8 +23,17 @@ namespace GraduationProject.Controllers
             try
             {
                 List<Holiday> holidays = _context.Holidays.ToList();
-
-                return Ok(holidays);
+                List<HolidayReq> holidayDtos = new List<HolidayReq>();
+                foreach (var holiday in holidays)
+                {
+                    holidayDtos.Add(new HolidayReq
+                    {
+                        id = holiday.Id,
+                        name = holiday.Name,
+                        date = holiday.Date,
+                    });
+                }
+                return Ok(holidayDtos);
             }
             catch (Exception ex)
             {
@@ -32,45 +41,18 @@ namespace GraduationProject.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult DeleteHoliday(int id)
+        [HttpPost("DeleteHoliday")]
+        public ActionResult DeleteHoliday([FromBody] int id)
         {
             try
             {
-              
                 var holidayToDelete = _context.Holidays.FirstOrDefault(h => h.Id == id);
 
                 if (holidayToDelete == null)
                 {
                     return NotFound();
                 }
-
                 _context.Holidays.Remove(holidayToDelete);
-                _context.SaveChanges();
-
-                return Ok(); 
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut]
-        public ActionResult UpdateHoliday(HolidayReq holidayReq)
-        {
-            try
-            {
-                var AyAgaza = _context.Holidays.Find(holidayReq.id);
-
-                if (AyAgaza == null)
-                {
-                    return NotFound();
-                }
-
-                AyAgaza.Name = holidayReq.Name;
-                AyAgaza.Date = holidayReq.Date.Value;
-              
                 _context.SaveChanges();
 
                 return Ok();
@@ -81,15 +63,40 @@ namespace GraduationProject.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult AddHoliday(HolidayReq holidayReq)
+        [HttpPost("UpdateHoliday")]
+        public ActionResult UpdateHoliday([FromBody] HolidayReq holidayReq)
+        {
+            try
+            {
+                var holiday = _context.Holidays.Find(holidayReq.id);
+
+                if (holiday == null)
+                {
+                    return NotFound();
+                }
+
+                holiday.Name = holidayReq.name;
+                holiday.Date = holidayReq.date.Value;
+
+                _context.SaveChanges();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("AddHoliday")]
+        public ActionResult AddHoliday([FromBody] HolidayReq holidayReq)
         {
             try
             {
                 Holiday holiday = new Holiday();
 
-                holiday.Name = holidayReq.Name;
-                holiday.Date = holidayReq.Date.Value;
+                holiday.Name = holidayReq.name;
+                holiday.Date = holidayReq.date.Value;
 
                 _context.Add(holiday);
                 _context.SaveChanges();
