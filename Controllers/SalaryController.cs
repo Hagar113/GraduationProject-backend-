@@ -61,8 +61,11 @@ namespace GraduationProject.Controllers
 
 
             double DayPrice = Emp.salary.NetSalary / 30;
+            DateTime leaveTime = DateTime.Parse(Emp.LeaveTime);
+            DateTime attendanceTime = DateTime.Parse(Emp.AttendanceTime);
+            double timeDifferenceInHours = (leaveTime - attendanceTime).TotalHours;
 
-            double timeDifferenceInHours = (Emp.LeaveTime - Emp.AttendanceTime).TotalHours;
+           
 
             double HourPrice = DayPrice / timeDifferenceInHours;
 
@@ -192,7 +195,12 @@ namespace GraduationProject.Controllers
                 //double DayPrice = employee.salary.NetSalary / DateTime.DaysInMonth(year, month);
                 double DayPrice = employee.salary.NetSalary / 30;
 
-                double timeDifferenceInHours = (employee.LeaveTime - employee.AttendanceTime).TotalHours;
+                DateTime leaveTime = DateTime.Parse(employee.LeaveTime);
+                DateTime attendanceTime = DateTime.Parse(employee.AttendanceTime);
+                double timeDifferenceInHours = (leaveTime - attendanceTime).TotalHours;
+
+
+
                 double HourPrice = timeDifferenceInHours > 0 ? DayPrice / timeDifferenceInHours : 0;
 
                 var holidays = _context.Holidays.Where(h => h.Date.Month == month && h.Date.Year == year).ToList();
@@ -340,7 +348,9 @@ namespace GraduationProject.Controllers
             foreach (var attendance in attendances)
             {
                 var timeDifferenceInHours = (attendance.Departure - attendance.Attendence).TotalHours;
-                var originalTimeDifferenceInHours = (employee.LeaveTime - employee.AttendanceTime).TotalHours;
+                DateTime leaveTime = DateTime.Parse(employee.LeaveTime);
+                DateTime attendanceTime = DateTime.Parse(employee.AttendanceTime);
+                double originalTimeDifferenceInHours = (leaveTime - attendanceTime).TotalHours;
 
                 var extraHours = timeDifferenceInHours > originalTimeDifferenceInHours ? timeDifferenceInHours - originalTimeDifferenceInHours : 0;
                 var earlyDepartureHours = originalTimeDifferenceInHours > timeDifferenceInHours ? originalTimeDifferenceInHours - timeDifferenceInHours : 0;
@@ -349,12 +359,12 @@ namespace GraduationProject.Controllers
                 {
                     id = attendance.Id,
                     name = employee.Name,
-                    department = employee.dept.Name,
+                    department = employee?.dept?.Name,
                     attend = attendance.Attendence.ToString("HH:mm"), // Format as "HH:mm" for time-only string
                     leave = attendance.Departure.ToString("HH:mm"),
                     date = attendance.Attendence.Date.ToString("yyyy-MM-dd"), // Format as "yyyy-MM-dd" for date-only string
-                    OriginalAttend = employee.AttendanceTime.ToString("hh\\:mm"),
-                    OriginalLeave = employee.LeaveTime.ToString("hh\\:mm"),
+                    OriginalAttend = employee.AttendanceTime,
+                    OriginalLeave = employee.LeaveTime,
 
                     ExtraHours = extraHours,
                     EarlyDepartureHours = earlyDepartureHours,
