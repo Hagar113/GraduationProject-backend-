@@ -14,8 +14,8 @@ namespace GraduationProject.Models
         public string Address { get; set; }
         public DateOnly Birthdate { get; set; }
         public DateOnly Contractdate { get; set; }
-        public string AttendanceTime { get; set; }
-        public string LeaveTime { get; set; }
+        public TimeSpan AttendanceTime { get; set; }
+        public TimeSpan LeaveTime { get; set; }
 
         [ForeignKey("dept")]
         public int? deptid { get; set; }
