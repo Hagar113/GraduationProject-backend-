@@ -19,7 +19,7 @@ namespace GraduationProject.Controllers
         }
         
         [HttpPost]
-        public async Task<ActionResult> AddUser([FromForm]UserReq userReq)
+        public async Task<ActionResult> AddUser([FromBody]UserReq userReq)
         {
             try
             {

@@ -77,20 +77,22 @@ namespace GraduationProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan>("AttendanceTime")
-                        .HasColumnType("time");
+                    b.Property<string>("AttendanceTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Birthdate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Birthdate")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("Contractdate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Contractdate")
+                        .HasColumnType("date");
 
                     b.Property<int?>("GId")
                         .HasColumnType("int");
 
-                    b.Property<TimeSpan>("LeaveTime")
-                        .HasColumnType("time");
+                    b.Property<string>("LeaveTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -234,8 +236,20 @@ namespace GraduationProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("activeRoute")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("label")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("routerLink")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");

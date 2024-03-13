@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GraduationProject.Migrations
 {
     /// <inheritdoc />
-    public partial class v1 : Migration
+    public partial class Hagor : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,15 +28,16 @@ namespace GraduationProject.Migrations
                 name: "generalSettings",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    method = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    selectedFirstWeekendDay = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    selectedSecondWeekendDay = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Deduction = table.Column<int>(type: "int", nullable: true),
+                    Addition = table.Column<int>(type: "int", nullable: true),
+                    SelectedFirstWeekendDay = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SelectedSecondWeekendDay = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_generalSettings", x => x.id);
+                    table.PrimaryKey("PK_generalSettings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -45,7 +46,11 @@ namespace GraduationProject.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    routerLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    label = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    activeRoute = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,7 +102,7 @@ namespace GraduationProject.Migrations
                         name: "FK_Companies_generalSettings_GeneralSettingsId",
                         column: x => x.GeneralSettingsId,
                         principalTable: "generalSettings",
-                        principalColumn: "id");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -203,10 +208,10 @@ namespace GraduationProject.Migrations
                     Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NationalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Contractdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AttendanceTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    LeaveTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Birthdate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Contractdate = table.Column<DateOnly>(type: "date", nullable: false),
+                    AttendanceTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LeaveTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     deptid = table.Column<int>(type: "int", nullable: true),
                     GId = table.Column<int>(type: "int", nullable: true),
                     Sal_ID = table.Column<int>(type: "int", nullable: true),
@@ -235,26 +240,6 @@ namespace GraduationProject.Migrations
                         column: x => x.user_Id,
                         principalTable: "Users",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HolidayDays",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    H_Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HolidayDays", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_HolidayDays_Holidays_H_Id",
-                        column: x => x.H_Id,
-                        principalTable: "Holidays",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -314,11 +299,6 @@ namespace GraduationProject.Migrations
                 column: "user_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HolidayDays_H_Id",
-                table: "HolidayDays",
-                column: "H_Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Holidays_CompanyId",
                 table: "Holidays",
                 column: "CompanyId");
@@ -346,16 +326,13 @@ namespace GraduationProject.Migrations
                 name: "EmployeeAttendances");
 
             migrationBuilder.DropTable(
-                name: "HolidayDays");
+                name: "Holidays");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
                 name: "Employees");
-
-            migrationBuilder.DropTable(
-                name: "Holidays");
 
             migrationBuilder.DropTable(
                 name: "Pages");

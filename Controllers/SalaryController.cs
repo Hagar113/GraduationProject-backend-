@@ -66,7 +66,6 @@ namespace GraduationProject.Controllers
             double timeDifferenceInHours = (leaveTime - attendanceTime).TotalHours;
 
            
-
             double HourPrice = DayPrice / timeDifferenceInHours;
 
 

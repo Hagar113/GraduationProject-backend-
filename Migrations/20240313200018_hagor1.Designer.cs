@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240304171038_v1")]
-    partial class v1
+    [Migration("20240313200018_hagor1")]
+    partial class hagor1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,20 +80,22 @@ namespace GraduationProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan>("AttendanceTime")
-                        .HasColumnType("time");
+                    b.Property<string>("AttendanceTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Birthdate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Birthdate")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("Contractdate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Contractdate")
+                        .HasColumnType("date");
 
                     b.Property<int?>("GId")
                         .HasColumnType("int");
 
-                    b.Property<TimeSpan>("LeaveTime")
-                        .HasColumnType("time");
+                    b.Property<string>("LeaveTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -176,22 +178,27 @@ namespace GraduationProject.Migrations
 
             modelBuilder.Entity("GraduationProject.Models.GeneralSettings", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("method")
+                    b.Property<int?>("Addition")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Deduction")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SelectedFirstWeekendDay")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("selectedFirstWeekendDay")
+                    b.Property<string>("SelectedSecondWeekendDay")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("selectedSecondWeekendDay")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("generalSettings");
                 });
@@ -224,27 +231,6 @@ namespace GraduationProject.Migrations
                     b.ToTable("Holidays");
                 });
 
-            modelBuilder.Entity("GraduationProject.Models.HolidayDay", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("H_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("H_Id");
-
-                    b.ToTable("HolidayDays");
-                });
-
             modelBuilder.Entity("GraduationProject.Models.Page", b =>
                 {
                     b.Property<int>("id")
@@ -253,8 +239,20 @@ namespace GraduationProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("activeRoute")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("label")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("routerLink")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
@@ -443,17 +441,6 @@ namespace GraduationProject.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("GraduationProject.Models.HolidayDay", b =>
-                {
-                    b.HasOne("GraduationProject.Models.Holiday", "holiday")
-                        .WithMany("HolidayDays")
-                        .HasForeignKey("H_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("holiday");
-                });
-
             modelBuilder.Entity("GraduationProject.Models.RolePermission", b =>
                 {
                     b.HasOne("GraduationProject.Models.Page", "page")
@@ -488,11 +475,6 @@ namespace GraduationProject.Migrations
             modelBuilder.Entity("GraduationProject.Models.Department", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("GraduationProject.Models.Holiday", b =>
-                {
-                    b.Navigation("HolidayDays");
                 });
 
             modelBuilder.Entity("GraduationProject.Models.Page", b =>
