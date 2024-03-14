@@ -146,12 +146,31 @@ namespace GraduationProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        //minf3sh ams7 role mrtbta b user
+        //[HttpPost("DeleteRole")]
+        //public ActionResult DeleteRole([FromBody] int id)
+        //{
+        //    try
+        //    {
+        //        var role = _context.Roles.Include(z => z.RolesPermissions).FirstOrDefault(h => h.Id == id);
+        //        _context.Roles.Remove(role);
+        //        _context.SaveChanges();
+        //        return Ok(new { message = "تم الحذف بنجاح" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
 
+        //}
+        // hlghy ertbat el user bl role el hms7ha
         [HttpPost("DeleteRole")]
         public ActionResult DeleteRole([FromBody] int id)
         {
             try
             {
+                var users = _context.Users.Where(z => z.Role_Id == id).ToList();
+                users.ForEach(z => { z.Role_Id = null; });
                 var role = _context.Roles.Include(z => z.RolesPermissions).FirstOrDefault(h => h.Id == id);
                 _context.Roles.Remove(role);
                 _context.SaveChanges();
