@@ -364,7 +364,6 @@ namespace GraduationProject.Controllers
                     date = attendance.Attendence.Date.ToString("yyyy-MM-dd"), // Format as "yyyy-MM-dd" for date-only string
                     OriginalAttend = employee.AttendanceTime,
                     OriginalLeave = employee.LeaveTime,
-
                     ExtraHours = extraHours,
                     EarlyDepartureHours = earlyDepartureHours,
                 };
