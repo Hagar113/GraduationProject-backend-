@@ -35,7 +35,7 @@ namespace GraduationProject.Controllers
             return Ok();
         }
 
-        // ---------------------------------------------------------------------------------
+   
 
         [HttpGet]
         public ActionResult GetGeneralSettingsList()
