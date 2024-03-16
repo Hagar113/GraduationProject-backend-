@@ -17,9 +17,11 @@ namespace GraduationProject.Models
         [Key]
         public int Id { get; set; }
 
-        public int? Deduction { get; set; }  
+        public int? Deduction { get; set; }
 
-        public int? Addition { get; set; }  
+        public int? Addition { get; set; }
+        //public string Method { get; set; } // "hourly" or "currency"
+        //public decimal Value { get; set; }
 
         public string SelectedFirstWeekendDay { get; set; } 
 

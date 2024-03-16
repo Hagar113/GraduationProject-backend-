@@ -17,7 +17,7 @@ namespace GraduationProject.Controllers
             _context = context;
         }
 
-         
+
         [HttpPost]
         public ActionResult SaveSettings(GeneralSettingDTO generalSettingDTO)
         {
@@ -35,22 +35,42 @@ namespace GraduationProject.Controllers
             return Ok();
         }
 
-   
+
+
+        //[HttpGet]
+        //public ActionResult GetGeneralSettingsList()
+        //{
+        //    List<GeneralSettings> settingsList = _context.generalSettings.ToList();
+        //    if (!settingsList.Any()) // Check if list is empty
+        //    {
+        //        return NotFound(); // Return not found status if no settings exist
+        //    }
+        //    return Ok(settingsList);
+        //}
+
+
 
         [HttpGet]
-        public ActionResult GetGeneralSettingsList()
+        public ActionResult<GeneralSettings> GetWeekendDays()
         {
-            List<GeneralSettings> settingsList = _context.generalSettings.ToList();
-            if (!settingsList.Any()) // Check if list is empty
-            {
-                return NotFound(); // Return not found status if no settings exist
-            }
-            return Ok(settingsList);
-        }
-         
 
-       
-        
+
+            GeneralSettings generalSettings = _context.generalSettings.OrderByDescending(x => x.Id).FirstOrDefault();
+
+            if (generalSettings == null)
+            {
+                generalSettings = new GeneralSettings
+                {
+                    SelectedFirstWeekendDay = "Saturday",
+                    SelectedSecondWeekendDay = "Sunday",
+                    Addition = 0,
+                    Deduction = 0
+                };
+            }
+
+            return Ok(generalSettings);
+        }
+
     }
 
 }
