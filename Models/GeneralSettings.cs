@@ -4,13 +4,7 @@ namespace GraduationProject.Models
 {
     public class GeneralSettings
     {
-        //[Key]
-        //public int id { get; set; }
-        //public int? Deduction { get; set; }
-        //public int? Addition { get; set; }
-        //public string? selectedFirstWeekendDay { get; set; }
-        //public string? selectedSecondWeekendDay { get; set; }
-    
+        
     
     
     
@@ -20,8 +14,8 @@ namespace GraduationProject.Models
         public int? Deduction { get; set; }
 
         public int? Addition { get; set; }
-        //public string Method { get; set; } // "hourly" or "currency"
-        //public decimal Value { get; set; }
+        
+        public string? Method { get; set; }
 
         public string SelectedFirstWeekendDay { get; set; } 
 

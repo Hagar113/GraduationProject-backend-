@@ -247,9 +247,11 @@ namespace GraduationProject.Controllers
                 double extraHoursAdjustment = settings.Addition ?? 0;
                 double discountHoursAdjustment = settings.Deduction ?? 0;
 
-                extraHours *= extraHoursAdjustment;
-                lossHours *= discountHoursAdjustment;
-
+                if (settings.Method == "hour")
+                {
+                    extraHours *= extraHoursAdjustment;
+                    lossHours *= discountHoursAdjustment;
+                }
                 var salary = new SalaryResponseDto
                 {
                     empName = employee.Name,
@@ -259,8 +261,8 @@ namespace GraduationProject.Controllers
                     absenceDays = absenceDayss,
                     exrtaHours = extraHours,
                     discountHours = lossHours,
-                    extraSalary = extraHours * HourPrice,
-                    discountSalary = lossHours * HourPrice,
+                    extraSalary = (double)(settings.Method == "hour" ? (extraHours * HourPrice) : (extraHours * settings.Addition)),
+                    discountSalary = (double)(settings.Method == "hour" ? (lossHours * HourPrice) : (lossHours * settings.Deduction)),
                     HourlyRate = HourPrice,
                     DailyRate = DayPrice,
                     WeekendDays = weekendsInMonth,

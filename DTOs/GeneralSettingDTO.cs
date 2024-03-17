@@ -6,7 +6,7 @@
         public int? Deduction { get; set; }
 
         public int? Addition { get; set; }
-
+        public string? Method { get; set; }
         public string SelectedFirstWeekendDay { get; set; }
 
         public string SelectedSecondWeekendDay { get; set; }

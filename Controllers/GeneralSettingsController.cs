@@ -25,6 +25,7 @@ namespace GraduationProject.Controllers
             {
                 Addition = generalSettingDTO.Addition,
                 Deduction = generalSettingDTO.Deduction,
+                Method=generalSettingDTO.Method,
                 SelectedFirstWeekendDay = generalSettingDTO.SelectedFirstWeekendDay,
                 SelectedSecondWeekendDay = generalSettingDTO.SelectedSecondWeekendDay
             };
@@ -37,38 +38,16 @@ namespace GraduationProject.Controllers
 
 
 
-        //[HttpGet]
-        //public ActionResult GetGeneralSettingsList()
-        //{
-        //    List<GeneralSettings> settingsList = _context.generalSettings.ToList();
-        //    if (!settingsList.Any()) // Check if list is empty
-        //    {
-        //        return NotFound(); // Return not found status if no settings exist
-        //    }
-        //    return Ok(settingsList);
-        //}
-
-
 
         [HttpGet]
-        public ActionResult<GeneralSettings> GetWeekendDays()
+        public ActionResult GetGeneralSettingsList()
         {
-
-
-            GeneralSettings generalSettings = _context.generalSettings.OrderByDescending(x => x.Id).FirstOrDefault();
-
-            if (generalSettings == null)
+            GeneralSettings settingsList = _context.generalSettings.OrderByDescending(z => z.Id).FirstOrDefault();
+            if (settingsList == null) // Check if list is empty
             {
-                generalSettings = new GeneralSettings
-                {
-                    SelectedFirstWeekendDay = "Saturday",
-                    SelectedSecondWeekendDay = "Sunday",
-                    Addition = 0,
-                    Deduction = 0
-                };
+                return NotFound(); // Return not found status if no settings exist
             }
-
-            return Ok(generalSettings);
+            return Ok(settingsList);
         }
 
     }
