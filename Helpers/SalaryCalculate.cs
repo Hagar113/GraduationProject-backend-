@@ -18,7 +18,7 @@ namespace GraduationProject.Helpers
                                .Include(h => h.salary)
             .FirstOrDefault(h => h.Id == id);
 
-            var settings = _context.generalSettings.FirstOrDefault();
+            var settings = _context.generalSettings.OrderByDescending(s => s.Id).FirstOrDefault();
 
             var firstWeekDay = APIsHelper.GetNumberOfWeekdaysInMonth(settings != null && settings.SelectedFirstWeekendDay != null ? settings.SelectedFirstWeekendDay : "");
             var secondWeekDay = APIsHelper.GetNumberOfWeekdaysInMonth(settings != null && settings.SelectedSecondWeekendDay != null ? settings.SelectedSecondWeekendDay : "");
@@ -61,7 +61,14 @@ namespace GraduationProject.Helpers
                     lossHours += resetHours;
                 }
             }
+            double extraHoursAdjustment = settings.Addition ?? 0;
+            double discountHoursAdjustment = settings.Deduction ?? 0;
 
+            if (settings.Method == "hour")
+            {
+                extraHours *= extraHoursAdjustment;
+                lossHours *= discountHoursAdjustment;
+            }
             SalaryResponseDto responseDto = new SalaryResponseDto();
             responseDto.empName = Emp.Name;
             responseDto.NetSalary = Emp.salary.NetSalary;
@@ -70,8 +77,9 @@ namespace GraduationProject.Helpers
             responseDto.absenceDays = totalOfficialDaysInThisMonth - (attendances != null ? attendances.Count() : 0);
             responseDto.exrtaHours = extraHours;
             responseDto.discountHours = lossHours;
-            responseDto.extraSalary = (double)(extraHours * HourPrice * settings.Addition);
-            responseDto.discountSalary = (double)(lossHours * HourPrice * settings.Deduction);
+            responseDto.extraSalary = (double)(settings.Method == "hour" ? (extraHours * HourPrice) : (extraHours * settings.Addition));
+            responseDto.discountSalary = (double)(settings.Method == "hour" ? (lossHours * HourPrice) : (lossHours * settings.Deduction));
+
 
             double totalSalaey = responseDto.NetSalary + responseDto.extraSalary + responseDto.discountSalary;
 

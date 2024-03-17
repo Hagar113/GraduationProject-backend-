@@ -93,7 +93,14 @@ namespace GraduationProject.Controllers
                     lossHours += resetHours;
                 }
             }
+            double extraHoursAdjustment = settings.Addition ?? 0;
+            double discountHoursAdjustment = settings.Deduction ?? 0;
 
+            if (settings.Method == "hour")
+            {
+                extraHours *= extraHoursAdjustment;
+                lossHours *= discountHoursAdjustment;
+            }
             SalaryResponseDto responseDto = new SalaryResponseDto();
             responseDto.empName = Emp.Name;
             responseDto.NetSalary = Emp.salary.NetSalary;
@@ -104,9 +111,9 @@ namespace GraduationProject.Controllers
             responseDto.absenceDays = (totalOfficialDaysInThisMonth - attendedDaysCount);
             responseDto.exrtaHours = extraHours;
             responseDto.discountHours = lossHours;
-            responseDto.extraSalary = (double)(extraHours * HourPrice * settings.Addition);
-            responseDto.discountSalary = (double)(lossHours * HourPrice * settings.Deduction);
-            
+            responseDto.extraSalary = (double)(settings.Method == "hour" ? (extraHours * HourPrice) : (extraHours * settings.Addition));
+            responseDto.discountSalary = (double)(settings.Method == "hour" ? (lossHours * HourPrice) : (lossHours * settings.Deduction));
+
             double totalSalaey = responseDto.NetSalary + responseDto.extraSalary + responseDto.discountSalary;
 
              responseDto.totalSalary = totalSalaey - (DayPrice * (30 - attendedDaysCount));
@@ -158,6 +165,8 @@ namespace GraduationProject.Controllers
                 .ToList();
 
             var settings = _context.generalSettings.OrderByDescending(s => s.Id).FirstOrDefault();
+            //var settings = _context.generalSettings.FirstOrDefault();
+
 
             if (settings == null)
             {
@@ -261,7 +270,7 @@ namespace GraduationProject.Controllers
                     absenceDays = absenceDayss,
                     exrtaHours = extraHours,
                     discountHours = lossHours,
-                    extraSalary = (double)(settings.Method == "hour" ? (extraHours * HourPrice) : (extraHours * settings.Addition)),
+                   extraSalary = (double)(settings.Method == "hour" ? (extraHours * HourPrice) : (extraHours * settings.Addition)),
                     discountSalary = (double)(settings.Method == "hour" ? (lossHours * HourPrice) : (lossHours * settings.Deduction)),
                     HourlyRate = HourPrice,
                     DailyRate = DayPrice,
