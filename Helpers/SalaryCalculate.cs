@@ -16,9 +16,9 @@ namespace GraduationProject.Helpers
             var Emp = _context.Employees
                                .Include(h => h.dept)
                                .Include(h => h.salary)
-            .FirstOrDefault(h => h.Id == id);
+                               .FirstOrDefault(h => h.Id == id);
 
-            var settings = _context.generalSettings.OrderByDescending(s => s.Id).FirstOrDefault();
+            var settings = _context.generalSettings.OrderByDescending(h => h.Id).FirstOrDefault();
 
             var firstWeekDay = APIsHelper.GetNumberOfWeekdaysInMonth(settings != null && settings.SelectedFirstWeekendDay != null ? settings.SelectedFirstWeekendDay : "");
             var secondWeekDay = APIsHelper.GetNumberOfWeekdaysInMonth(settings != null && settings.SelectedSecondWeekendDay != null ? settings.SelectedSecondWeekendDay : "");
@@ -32,35 +32,67 @@ namespace GraduationProject.Helpers
 
             int daysInCurrentMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
 
-            int totalOfficialDaysInThisMonth = daysInCurrentMonth - firstWeekDaysCount - secondWeekDaysCount - HolidaysCount;
+            int totalOfficialDaysInThisMonth = daysInCurrentMonth - (firstWeekDaysCount + secondWeekDaysCount + HolidaysCount);
+
 
             double DayPrice = Emp.salary.NetSalary / 30;
-
             DateTime leaveTime = DateTime.Parse(Emp.LeaveTime);
             DateTime attendanceTime = DateTime.Parse(Emp.AttendanceTime);
             double timeDifferenceInHours = (leaveTime - attendanceTime).TotalHours;
+
 
             double HourPrice = DayPrice / timeDifferenceInHours;
 
 
             var attendances = _context.EmployeeAttendances.Where(z => z.EmployeeId == id && z.Attendence.Month == DateTime.Now.Month).ToList();
 
+
+
+            int attendedDaysCount = attendances != null ? attendances.Count() : 0;
+
+            int absenceDays = totalOfficialDaysInThisMonth - attendedDaysCount;
+
             double extraHours = 0;
             double lossHours = 0;
 
             foreach (var attendance in attendances)
             {
-                var DifferenceInHours = (attendance.Departure - attendance.Attendence).TotalHours;
-                var resetHours = DifferenceInHours - timeDifferenceInHours;
-                if (resetHours > 0)
+                TimeSpan timeDifference = new TimeSpan();
+                double attendanceTimeEmp = 0.0;
+
+                timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
+
+                attendanceTimeEmp = timeDifference.TotalHours;
+
+                TimeSpan timeDifference2 = new TimeSpan();
+                double departureTimeEmp = 0.0;
+
+                timeDifference2 = attendance.Departure.TimeOfDay - leaveTime.TimeOfDay;
+
+                departureTimeEmp = timeDifference2.TotalHours;
+
+
+                var resetHours = attendanceTimeEmp + departureTimeEmp;
+
+                if (attendanceTimeEmp > 0)
                 {
-                    extraHours += resetHours;
+                    extraHours += attendanceTimeEmp;
                 }
                 else
-                {   
-                    lossHours += resetHours;
+                {
+                    lossHours += attendanceTimeEmp;
+                }
+
+                if (departureTimeEmp > 0)
+                {
+                    extraHours += departureTimeEmp;
+                }
+                else
+                {
+                    lossHours += departureTimeEmp;
                 }
             }
+
             double extraHoursAdjustment = settings.Addition ?? 0;
             double discountHoursAdjustment = settings.Deduction ?? 0;
 
@@ -69,23 +101,26 @@ namespace GraduationProject.Helpers
                 extraHours *= extraHoursAdjustment;
                 lossHours *= discountHoursAdjustment;
             }
+
+            int absenceDayss = totalOfficialDaysInThisMonth - attendances?.Count() ?? 0;
+
             SalaryResponseDto responseDto = new SalaryResponseDto();
             responseDto.empName = Emp.Name;
             responseDto.NetSalary = Emp.salary.NetSalary;
             responseDto.deptName = Emp.dept.Name;
-            responseDto.attendanceDays = attendances != null ? attendances.Count() : 0;
-            responseDto.absenceDays = totalOfficialDaysInThisMonth - (attendances != null ? attendances.Count() : 0);
+            responseDto.attendanceDays = attendedDaysCount;
+            responseDto.absenceDays = absenceDayss;
             responseDto.exrtaHours = extraHours;
             responseDto.discountHours = lossHours;
             responseDto.extraSalary = (double)(settings.Method == "hour" ? (extraHours * HourPrice) : (extraHours * settings.Addition));
             responseDto.discountSalary = (double)(settings.Method == "hour" ? (lossHours * HourPrice) : (lossHours * settings.Deduction));
-
+            responseDto.HourlyRate = HourPrice;
 
             double totalSalaey = responseDto.NetSalary + responseDto.extraSalary + responseDto.discountSalary;
 
-            responseDto.totalSalary = totalSalaey - (DayPrice * (30 - attendances.Count()));
-
+            responseDto.totalSalary = totalSalaey - (DayPrice * (30 - attendedDaysCount));
             return responseDto;
+
         }
     }
 }

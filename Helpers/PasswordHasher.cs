@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace GraduationProject.Helpers
 {
@@ -44,4 +45,5 @@ namespace GraduationProject.Helpers
             return true;
         }
     }
+
 }

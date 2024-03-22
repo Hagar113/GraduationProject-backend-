@@ -55,7 +55,7 @@ namespace GraduationProject.Controllers
                         isEdit = permision.IsEdit,
                         isView = permision.IsView,
                         page_Id = permision.Page_Id,
-                        page_Name = permision.page.name,
+                        page_Name = permision.page.label,
                     });
 
                 }
@@ -73,6 +73,12 @@ namespace GraduationProject.Controllers
             try
             {
                 var pages = _context.Pages.ToList();
+                //var pages = _context.Pages.Skip(1).ToList();
+                //var firstPage = pages.FirstOrDefault(p => p.id == 1);
+                //if (firstPage != null)
+                //{
+                //    pages.Remove(firstPage);
+                //}
                 SaveRoleDTO saveRoleDTO = new SaveRoleDTO();
                 saveRoleDTO.role_Id = 0;
                 saveRoleDTO.role_Name = "";
@@ -88,7 +94,7 @@ namespace GraduationProject.Controllers
                         isEdit = false,
                         isView = false,
                         page_Id = page.id,
-                        page_Name = page.name,
+                        page_Name = page.label,
                     });
                 }
                 return Ok(saveRoleDTO);
@@ -98,8 +104,10 @@ namespace GraduationProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
 
 
+        //-------------------------------------------------------------
         [HttpPost("saveRole")]
         public ActionResult SaveRole([FromBody] SaveRoleDTO saveRoleDTO)
         {

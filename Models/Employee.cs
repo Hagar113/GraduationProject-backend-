@@ -30,5 +30,10 @@ namespace GraduationProject.Models
         [ForeignKey("user")]
         public int? user_Id { get; set; }
         public virtual User? user{ get; set; }
+
+        //[ForeignKey("employeeAttendanc")]
+        //public int? AttendanceID { get; set; }
+        //public virtual EmployeeAttendance? employeeAttendance { get; set; }
+
     }
 }

@@ -2,6 +2,7 @@
 {
     public class UserReq
     {
+      
         public string User_Name{ get; set; }
         public string Name { get; set; } 
         public string Email { get; set; }

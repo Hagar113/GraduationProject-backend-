@@ -16,20 +16,56 @@ namespace GraduationProject.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public IActionResult GetAttendancies(GetAttendanceRequest attendanceRequest)
+        [HttpPost("GetAttendancies")]
+        public IActionResult GetAttendancies([FromBody] GetAttendanceRequest attendanceRequest)
         {
-            //var attendacies = _context.EmployeeAttendances
-            //                        .Where(h => h.Attendence.Day == DateTime.Now.Day && 
-            //                                    h.Attendence.Month == DateTime.Now.Month && 
-            //                                    h.Attendence.Year == DateTime.Now.Year)
-            //                        .ToList();
             var attendacies2 = _context.EmployeeAttendances
+                                    .Include(h => h.Employee)
+                                        .ThenInclude(h => h.dept)
                                     .Where(h => h.Attendence >= attendanceRequest.from &&
                                                 h.Departure <= attendanceRequest.to)
                                     .ToList();
-            return Ok(attendacies2);
+
+            List<EmployeesAttendancesResponse> employeesAttendances = new List<EmployeesAttendancesResponse>();
+            foreach (var attend in attendacies2)
+            {
+                employeesAttendances.Add(new EmployeesAttendancesResponse
+                {
+                    id = attend.Id,
+                    empName = attend.Employee.Name,
+                    deptName = attend.Employee.dept.Name,
+                    day = attend.Attendence.ToShortDateString(),
+                    attendance = attend.Attendence.ToShortTimeString(),
+                    departure = attend.Departure.ToShortTimeString(),
+                });
+            }
+            return Ok(employeesAttendances);
         }
+
+
+        [HttpGet("GetAllEmps")]
+        public IActionResult GetAllEmps()
+        {
+            var attendacies = _context.EmployeeAttendances
+                                .Include(h => h.Employee)
+                                    .ThenInclude(h => h.dept)
+                                .ToList();
+            List<EmployeesAttendancesResponse> employeesAttendances = new List<EmployeesAttendancesResponse>();
+            foreach (var attend in attendacies)
+            {
+                employeesAttendances.Add(new EmployeesAttendancesResponse
+                {
+                    id = attend.Id,
+                    empName = attend.Employee.Name,
+                    deptName = attend.Employee.dept.Name,
+                    day = attend.Attendence.ToShortDateString(),
+                    attendance = attend.Attendence.ToShortTimeString(),
+                    departure = attend.Departure.ToShortTimeString(),
+                });
+            }
+            return Ok(employeesAttendances);
+        }
+
 
         [HttpPost]
         public IActionResult AddEmpAttendace(SaveEmpRequest request)
@@ -37,7 +73,7 @@ namespace GraduationProject.Controllers
             EmployeeAttendance employeeAttendance = new EmployeeAttendance();
             employeeAttendance.Attendence = request.attendance;
             employeeAttendance.Departure = request.departure;
-            employeeAttendance.EmployeeId = request.EmpId;
+            employeeAttendance.EmployeeId = request.EmpId.Value;
 
             _context.EmployeeAttendances.Add(employeeAttendance);
             _context.SaveChanges();
@@ -51,7 +87,6 @@ namespace GraduationProject.Controllers
 
             employeeAttendance.Departure = request.departure;
             employeeAttendance.Attendence = request.attendance;
-            employeeAttendance.EmployeeId = request.EmpId;
 
             _context.Entry(employeeAttendance).State = EntityState.Modified;
             _context.SaveChanges();
@@ -74,10 +109,10 @@ namespace GraduationProject.Controllers
             var emps = _context.Employees.ToList();
 
             List<GetEmpsResponse> empsResponses = new List<GetEmpsResponse>();
-            
+
             foreach (var emp in emps)
             {
-                empsResponses.Add(new GetEmpsResponse { id = emp.Id , name = emp.Name });
+                empsResponses.Add(new GetEmpsResponse { id = emp.Id, name = emp.Name });
             }
 
             return Ok(empsResponses);
