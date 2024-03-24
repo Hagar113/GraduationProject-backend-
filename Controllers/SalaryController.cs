@@ -33,6 +33,8 @@ namespace GraduationProject.Controllers
             return Ok(salaryResponseDtos);
         }
         #region get
+
+
         [HttpGet("{id}")]
         public IActionResult GetEmployeSalary(int id)
         {
@@ -72,7 +74,7 @@ namespace GraduationProject.Controllers
 
 
 
-            int attendedDaysCount = attendances != null ? attendances.Count() : 0;
+            int attendedDaysCount = attendances != null ? attendances.Where(h => h.Departure != null).Count() : 0;
 
             int absenceDays = totalOfficialDaysInThisMonth - attendedDaysCount;
 
@@ -81,50 +83,44 @@ namespace GraduationProject.Controllers
 
             foreach (var attendance in attendances)
             {
-                TimeSpan timeDifference = new TimeSpan();
-                double attendanceTimeEmp = 0.0;
-
-                //if (attendanceTime.TimeOfDay >= attendance.Attendence.TimeOfDay)
-                //    timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
-
-                //else
-                timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
-
-                attendanceTimeEmp = timeDifference.TotalHours;
-
-
-
-                TimeSpan timeDifference2 = new TimeSpan();
-                double departureTimeEmp = 0.0;
-
-                //if(leaveTime.TimeOfDay >= attendance.Departure.TimeOfDay)
-                //     timeDifference2 =  attendance.Departure.TimeOfDay - leaveTime.TimeOfDay;
-
-                // else
-                timeDifference2 = attendance.Departure.TimeOfDay - leaveTime.TimeOfDay;
-
-                departureTimeEmp = timeDifference2.TotalHours;
-
-
-                var resetHours = attendanceTimeEmp + departureTimeEmp;
-
-                if (attendanceTimeEmp > 0)
+                if (attendance.Departure != null)
                 {
-                    extraHours += attendanceTimeEmp;
-                }
-                else
-                {
-                    lossHours += attendanceTimeEmp;
+                    TimeSpan timeDifference = new TimeSpan();
+                    double attendanceTimeEmp = 0.0;
+
+                    timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
+
+                    attendanceTimeEmp = timeDifference.TotalHours;
+
+                    TimeSpan timeDifference2 = new TimeSpan();
+                    double departureTimeEmp = 0.0;
+
+                    timeDifference2 = attendance.Departure.Value.TimeOfDay - leaveTime.TimeOfDay;
+
+                    departureTimeEmp = timeDifference2.TotalHours;
+
+
+                    var resetHours = attendanceTimeEmp + departureTimeEmp;
+
+                    if (attendanceTimeEmp > 0)
+                    {
+                        extraHours += attendanceTimeEmp;
+                    }
+                    else
+                    {
+                        lossHours += attendanceTimeEmp;
+                    }
+
+                    if (departureTimeEmp > 0)
+                    {
+                        extraHours += departureTimeEmp;
+                    }
+                    else
+                    {
+                        lossHours += departureTimeEmp;
+                    }
                 }
 
-                if (departureTimeEmp > 0)
-                {
-                    extraHours += departureTimeEmp;
-                }
-                else
-                {
-                    lossHours += departureTimeEmp;
-                }
             }
 
             double extraHoursAdjustment = settings.Addition ?? 0;
@@ -156,8 +152,6 @@ namespace GraduationProject.Controllers
             return Ok(responseDto);
 
         }
-#endregion
-        //--------------------------h1---------------------------------------------
 
         private int CountWeekendsInMonth(int year, int month, List<string> selectedWeekendDays)
         {
@@ -193,8 +187,8 @@ namespace GraduationProject.Controllers
             return count;
         }
 
-        #region search
-
+        #endregion
+        //--------------------------h1---------------------------------------------
         [HttpGet("SearchEmployees")]
         public IActionResult GetSalaryReport(int month, int year)
         {
@@ -220,7 +214,7 @@ namespace GraduationProject.Controllers
 
             var filteredSalaries = new List<SalaryResponseDto>();
 
-            var employeesForMonthYear = employees.Where(e => _context.EmployeeAttendances.Any(a => a.EmployeeId == e.Id && a.Attendence.Month == month && a.Attendence.Year == year)).ToList();//IMP
+            var employeesForMonthYear = employees.Where(e => _context.EmployeeAttendances.Any(a => a.EmployeeId == e.Id && a.Attendence.Month == month && a.Attendence.Year == year)).ToList();
 
             if (employeesForMonthYear.Count == 0)//IMP
             {
@@ -263,11 +257,11 @@ namespace GraduationProject.Controllers
 
                 int totalOfficialDaysInThisMonth = daysInCurrentMonth - (firstWeekDaysCount + secondWeekDaysCount + HolidaysCount);
 
-                var attendances = _context.EmployeeAttendances//IMP
+                var attendances = _context.EmployeeAttendances
                     .Where(z => z.EmployeeId == employee.Id && z.Attendence.Month == month && z.Attendence.Year == year)
                     .ToList();
 
-                int absenceDayss = totalOfficialDaysInThisMonth - attendances?.Count() ?? 0;
+                int absenceDayss = totalOfficialDaysInThisMonth - attendances?.Where(e => e.Departure != null).Count() ?? 0;
 
                 var holidaysAndWeekends = holidays.Select(h => h.Date.DayOfWeek.ToString())
                     .Concat(selectedWeekendDays)
@@ -279,40 +273,44 @@ namespace GraduationProject.Controllers
 
                 foreach (var attendance in attendances)
                 {
-                    TimeSpan timeDifference = new TimeSpan();
-                    double attendanceTimeEmp = 0.0;
-
-                    timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
-
-                    attendanceTimeEmp = timeDifference.TotalHours;
-
-                    TimeSpan timeDifference2 = new TimeSpan();
-                    double departureTimeEmp = 0.0;
-
-                    timeDifference2 = attendance.Departure.TimeOfDay - leaveTime.TimeOfDay;
-
-                    departureTimeEmp = timeDifference2.TotalHours;
-
-
-                    var resetHours = attendanceTimeEmp + departureTimeEmp;
-
-                    if (attendanceTimeEmp > 0)
+                    if (attendance.Departure != null)
                     {
-                        extraHours += attendanceTimeEmp;
-                    }
-                    else
-                    {
-                        lossHours += attendanceTimeEmp;
+                        TimeSpan timeDifference = new TimeSpan();
+                        double attendanceTimeEmp = 0.0;
+
+                        timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
+
+                        attendanceTimeEmp = timeDifference.TotalHours;
+
+                        TimeSpan timeDifference2 = new TimeSpan();
+                        double departureTimeEmp = 0.0;
+
+                        timeDifference2 = attendance.Departure.Value.TimeOfDay - leaveTime.TimeOfDay;
+
+                        departureTimeEmp = timeDifference2.TotalHours;
+
+
+                        var resetHours = attendanceTimeEmp + departureTimeEmp;
+
+                        if (attendanceTimeEmp > 0)
+                        {
+                            extraHours += attendanceTimeEmp;
+                        }
+                        else
+                        {
+                            lossHours += attendanceTimeEmp;
+                        }
+
+                        if (departureTimeEmp > 0)
+                        {
+                            extraHours += departureTimeEmp;
+                        }
+                        else
+                        {
+                            lossHours += departureTimeEmp;
+                        }
                     }
 
-                    if (departureTimeEmp > 0)
-                    {
-                        extraHours += departureTimeEmp;
-                    }
-                    else
-                    {
-                        lossHours += departureTimeEmp;
-                    }
                 }
 
 
@@ -331,7 +329,7 @@ namespace GraduationProject.Controllers
                     empName = employee.Name,
                     NetSalary = employee.salary.NetSalary,
                     deptName = employee.dept.Name,
-                    attendanceDays = attendances?.Count() ?? 0,
+                    attendanceDays = attendances?.Where(e => e.Departure != null).Count() ?? 0,
                     absenceDays = absenceDayss,
                     exrtaHours = extraHours,
                     discountHours = lossHours,
@@ -347,14 +345,15 @@ namespace GraduationProject.Controllers
 
                 //salary.totalSalary = totalSalarry - (DayPrice * (totalOfficialDaysInThisMonth - attendances.Count()));
 
-                salary.totalSalary = totalSalarry - (DayPrice * (30 - attendances.Count()));
+                salary.totalSalary = totalSalarry - (DayPrice * (30 - attendances.Where(e => e.Departure != null).Count()));
 
                 filteredSalaries.Add(salary);
             }
 
             return Ok(filteredSalaries);
         }
-        #endregion
+
+
         // Helper method to calculate delay hours
         private double CalculateDelayHours(DateTime arrivalTime, DateTime scheduledArrivalTime)
         {
@@ -376,7 +375,9 @@ namespace GraduationProject.Controllers
             }
             return 0;
         }
-        #region Details
+
+        #region details
+
         [HttpGet("GetEmployeeAttendanceDetails")]
         public IActionResult GetEmployeeAttendanceDetails(int employeeId, int month, int year)
         {
@@ -428,68 +429,71 @@ namespace GraduationProject.Controllers
 
             foreach (var attendance in attendances)
             {
-                TimeSpan timeDifference = new TimeSpan();
-                double attendanceTimeEmp = 0.0;
-
-                timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
-
-                attendanceTimeEmp = timeDifference.TotalHours;
-
-                TimeSpan timeDifference2 = new TimeSpan();
-                double departureTimeEmp = 0.0;
-
-                timeDifference2 = attendance.Departure.TimeOfDay - leaveTime.TimeOfDay;
-
-                departureTimeEmp = timeDifference2.TotalHours;
-
-
-                var resetHours = attendanceTimeEmp + departureTimeEmp;
-
-                double extraHours = 0;
-                double lossHours = 0;
-
-                if (attendanceTimeEmp > 0)
+                if (attendance.Departure != null)
                 {
-                    extraHours += attendanceTimeEmp;
+                    TimeSpan timeDifference = new TimeSpan();
+                    double attendanceTimeEmp = 0.0;
+
+                    timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
+
+                    attendanceTimeEmp = timeDifference.TotalHours;
+
+                    TimeSpan timeDifference2 = new TimeSpan();
+                    double departureTimeEmp = 0.0;
+
+                    timeDifference2 = attendance.Departure.Value.TimeOfDay - leaveTime.TimeOfDay;
+
+                    departureTimeEmp = timeDifference2.TotalHours;
+
+
+                    var resetHours = attendanceTimeEmp + departureTimeEmp;
+
+                    double extraHours = 0;
+                    double lossHours = 0;
+
+                    if (attendanceTimeEmp > 0)
+                    {
+                        extraHours += attendanceTimeEmp;
+                    }
+                    else
+                    {
+                        lossHours += attendanceTimeEmp;
+                    }
+
+                    if (departureTimeEmp > 0)
+                    {
+                        extraHours += departureTimeEmp;
+                    }
+                    else
+                    {
+                        lossHours += departureTimeEmp;
+                    }
+
+                    var attendanceDetail = new AttendanceResponse
+                    {
+                        id = attendance.Id,
+                        name = employee.Name,
+                        department = employee?.dept?.Name,
+                        attend = attendance.Attendence.ToString("HH:mm"),
+                        leave = attendance.Departure.Value.ToString("HH:mm"),
+                        date = attendance.Attendence.Date.ToString("yyyy-MM-dd"),
+                        OriginalAttend = employee.AttendanceTime,
+                        OriginalLeave = employee.LeaveTime,
+
+                        ExtraHours = extraHours,
+                        EarlyDepartureHours = lossHours,
+                    };
+
+                    attendanceDetails.Add(attendanceDetail);
+
                 }
-                else
-                {
-                    lossHours += attendanceTimeEmp;
-                }
-
-                if (departureTimeEmp > 0)
-                {
-                    extraHours += departureTimeEmp;
-                }
-                else
-                {
-                    lossHours += departureTimeEmp;
-                }
-
-                var attendanceDetail = new AttendanceResponse
-                {
-                    id = attendance.Id,
-                    name = employee.Name,
-                    department = employee?.dept?.Name,
-                    attend = attendance.Attendence.ToString("HH:mm"), // Format as "HH:mm" for time-only string
-                    leave = attendance.Departure.ToString("HH:mm"),
-                    date = attendance.Attendence.Date.ToString("yyyy-MM-dd"), // Format as "yyyy-MM-dd" for date-only string
-                    OriginalAttend = employee.AttendanceTime,
-                    OriginalLeave = employee.LeaveTime,
-
-                    ExtraHours = extraHours,
-                    EarlyDepartureHours = lossHours,
-                };
-
-                attendanceDetails.Add(attendanceDetail);
-
             }
 
             return Ok(attendanceDetails);
         }
         #endregion
-
     }
 
 }
+
 

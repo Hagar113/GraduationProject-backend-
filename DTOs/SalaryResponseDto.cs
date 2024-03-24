@@ -2,7 +2,9 @@
 {
     public class SalaryResponseDto
     {
+
         public string? empName { get; set; }
+        public int id { get; set; }
         public string? deptName { get; set; }
         public double NetSalary { get; set; }
         public int attendanceDays { get; set; }
@@ -19,5 +21,6 @@
 
         public int Month { get; set; }
         public int Year { get; set; }
+        public int AbsenceDaysToDate { get; set; }
     }
 }

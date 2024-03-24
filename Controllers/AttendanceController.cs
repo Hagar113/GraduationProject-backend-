@@ -36,7 +36,7 @@ namespace GraduationProject.Controllers
                     deptName = attend.Employee.dept.Name,
                     day = attend.Attendence.ToShortDateString(),
                     attendance = attend.Attendence.ToShortTimeString(),
-                    departure = attend.Departure.ToShortTimeString(),
+                    departure = attend.Departure.Value.ToShortTimeString(),
                 });
             }
             return Ok(employeesAttendances);
@@ -60,19 +60,21 @@ namespace GraduationProject.Controllers
                     deptName = attend.Employee.dept.Name,
                     day = attend.Attendence.ToShortDateString(),
                     attendance = attend.Attendence.ToShortTimeString(),
-                    departure = attend.Departure.ToShortTimeString(),
-                });
+                    departure = attend.Departure != null ? attend.Departure.Value.ToShortTimeString() : null,
+                
+                //departure = attend.Departure.Value.ToShortTimeString(),
+            });
             }
             return Ok(employeesAttendances);
         }
 
 
         [HttpPost]
-        public IActionResult AddEmpAttendace(SaveEmpRequest request)
+        public IActionResult AddEmpAttendace([FromBody] SaveEmpRequest request)
         {
             EmployeeAttendance employeeAttendance = new EmployeeAttendance();
             employeeAttendance.Attendence = request.attendance;
-            employeeAttendance.Departure = request.departure;
+            //employeeAttendance.Departure = request.departure;
             employeeAttendance.EmployeeId = request.EmpId.Value;
 
             _context.EmployeeAttendances.Add(employeeAttendance);
@@ -116,6 +118,14 @@ namespace GraduationProject.Controllers
             }
 
             return Ok(empsResponses);
+        }
+
+
+        [HttpGet("{id}")]
+        public IActionResult GetAttendaceById(int id)
+        {
+            var attendance = _context.EmployeeAttendances.FirstOrDefault(h => h.Id == id);
+            return Ok(attendance);
         }
 
     }

@@ -67,7 +67,7 @@ namespace GraduationProject.Helpers
                 TimeSpan timeDifference2 = new TimeSpan();
                 double departureTimeEmp = 0.0;
 
-                timeDifference2 = attendance.Departure.TimeOfDay - leaveTime.TimeOfDay;
+                timeDifference2 = attendance.Departure.Value.TimeOfDay - leaveTime.TimeOfDay;
 
                 departureTimeEmp = timeDifference2.TotalHours;
 
