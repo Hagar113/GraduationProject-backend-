@@ -17,7 +17,7 @@ namespace GraduationProject.Controllers
         {
             _context = context;
         }
-
+        #region get all emp
         [HttpGet("GetALLEmpsSalaries")]
         public IActionResult GetALLEmpsSalaries()
         {
@@ -32,6 +32,7 @@ namespace GraduationProject.Controllers
             }
             return Ok(salaryResponseDtos);
         }
+        #endregion
         #region get
 
 
@@ -188,7 +189,7 @@ namespace GraduationProject.Controllers
         }
 
         #endregion
-        //--------------------------h1---------------------------------------------
+        #region search
         [HttpGet("SearchEmployees")]
         public IActionResult GetSalaryReport(int month, int year)
         {
@@ -375,7 +376,7 @@ namespace GraduationProject.Controllers
             }
             return 0;
         }
-
+        #endregion 
         #region details
 
         [HttpGet("GetEmployeeAttendanceDetails")]

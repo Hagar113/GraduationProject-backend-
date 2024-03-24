@@ -48,7 +48,7 @@ namespace GraduationProject.Helpers
 
 
 
-            int attendedDaysCount = attendances != null ? attendances.Count() : 0;
+            int attendedDaysCount = attendances != null ? attendances.Where(h => h.Departure != null).Count() : 0;
 
             int absenceDays = totalOfficialDaysInThisMonth - attendedDaysCount;
 
@@ -57,40 +57,44 @@ namespace GraduationProject.Helpers
 
             foreach (var attendance in attendances)
             {
-                TimeSpan timeDifference = new TimeSpan();
-                double attendanceTimeEmp = 0.0;
-
-                timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
-
-                attendanceTimeEmp = timeDifference.TotalHours;
-
-                TimeSpan timeDifference2 = new TimeSpan();
-                double departureTimeEmp = 0.0;
-
-                timeDifference2 = attendance.Departure.Value.TimeOfDay - leaveTime.TimeOfDay;
-
-                departureTimeEmp = timeDifference2.TotalHours;
-
-
-                var resetHours = attendanceTimeEmp + departureTimeEmp;
-
-                if (attendanceTimeEmp > 0)
+                if (attendance.Departure != null)
                 {
-                    extraHours += attendanceTimeEmp;
-                }
-                else
-                {
-                    lossHours += attendanceTimeEmp;
+                    TimeSpan timeDifference = new TimeSpan();
+                    double attendanceTimeEmp = 0.0;
+
+                    timeDifference = attendanceTime.TimeOfDay - attendance.Attendence.TimeOfDay;
+
+                    attendanceTimeEmp = timeDifference.TotalHours;
+
+                    TimeSpan timeDifference2 = new TimeSpan();
+                    double departureTimeEmp = 0.0;
+
+                    timeDifference2 = attendance.Departure.Value.TimeOfDay - leaveTime.TimeOfDay;
+
+                    departureTimeEmp = timeDifference2.TotalHours;
+
+
+                    var resetHours = attendanceTimeEmp + departureTimeEmp;
+
+                    if (attendanceTimeEmp > 0)
+                    {
+                        extraHours += attendanceTimeEmp;
+                    }
+                    else
+                    {
+                        lossHours += attendanceTimeEmp;
+                    }
+
+                    if (departureTimeEmp > 0)
+                    {
+                        extraHours += departureTimeEmp;
+                    }
+                    else
+                    {
+                        lossHours += departureTimeEmp;
+                    }
                 }
 
-                if (departureTimeEmp > 0)
-                {
-                    extraHours += departureTimeEmp;
-                }
-                else
-                {
-                    lossHours += departureTimeEmp;
-                }
             }
 
             double extraHoursAdjustment = settings.Addition ?? 0;
