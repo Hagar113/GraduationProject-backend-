@@ -60,9 +60,11 @@ namespace GraduationProject.Controllers
             int daysInCurrentMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
 
             int totalOfficialDaysInThisMonth = daysInCurrentMonth - (firstWeekDaysCount + secondWeekDaysCount + HolidaysCount);
+            //var dayyyyss = (daysInCurrentMonth - (firstWeekDaysCount + secondWeekDaysCount));
 
+            double DayPrice = Emp.salary.NetSalary / 22;
+            //double DayPrice = Emp.salary.NetSalary / dayyyyss;
 
-            double DayPrice = Emp.salary.NetSalary / 30;
             DateTime leaveTime = DateTime.Parse(Emp.LeaveTime);
             DateTime attendanceTime = DateTime.Parse(Emp.AttendanceTime);
             double timeDifferenceInHours = (leaveTime - attendanceTime).TotalHours;
@@ -149,7 +151,7 @@ namespace GraduationProject.Controllers
 
             double totalSalaey = responseDto.NetSalary + responseDto.extraSalary + responseDto.discountSalary;
 
-            responseDto.totalSalary = totalSalaey - (DayPrice * (30 - attendedDaysCount));
+            responseDto.totalSalary = totalSalaey - (DayPrice * (22- attendedDaysCount));
             return Ok(responseDto);
 
         }
@@ -233,7 +235,7 @@ namespace GraduationProject.Controllers
                 int secondWeekDaysCount = !string.IsNullOrEmpty(secondWeekDay) ? CountWeekdaysInMonth(year, month, secondWeekDay) : 0;
 
                 //double DayPrice = employee.salary.NetSalary / DateTime.DaysInMonth(year, month);
-                double DayPrice = employee.salary.NetSalary / 30;
+                double DayPrice = employee.salary.NetSalary / 22;
 
                 DateTime leaveTime = DateTime.Parse(employee.LeaveTime);
                 DateTime attendanceTime = DateTime.Parse(employee.AttendanceTime);
@@ -346,7 +348,7 @@ namespace GraduationProject.Controllers
 
                 //salary.totalSalary = totalSalarry - (DayPrice * (totalOfficialDaysInThisMonth - attendances.Count()));
 
-                salary.totalSalary = totalSalarry - (DayPrice * (30 - attendances.Where(e => e.Departure != null).Count()));
+                salary.totalSalary = totalSalarry - (DayPrice * (22- attendances.Where(e => e.Departure != null).Count()));
 
                 filteredSalaries.Add(salary);
             }
